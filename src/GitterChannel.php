@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace Karma\System\Gitter;
 
+use Karma\Platform\Io\UserInterface;
 use Karma\Platform\Io\AbstractChannel;
-use Karma\Platform\Io\MessageInterface;
 use Karma\Platform\Io\SystemInterface;
+use Karma\Platform\Io\MessageInterface;
 
 /**
  * Class GitterChannel
@@ -65,16 +66,28 @@ class GitterChannel extends AbstractChannel
         $messages = $this->system->getClient()->messages->allBeforeId($this->id, $beforeId);
 
         foreach ($messages as $message) {
-            dd($message);
-            //yield new GitterMessage($this, )
+            yield new GitterMessage($this, $message);
         }
     }
 
-    public function publish(string $message): void
+    /**
+     * @param string $message
+     * @return MessageInterface
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function publish(string $message): MessageInterface
     {
-        // TODO: Implement publish() method.
+        $response = $this->system->getClient()
+            ->messages->create($this->getId(), $message);
+
+        return new GitterMessage($this, $response);
     }
 
+    /**
+     * @param \Closure $then
+     * @return void
+     */
     public function subscribe(\Closure $then): void
     {
         // TODO: Implement subscribe() method.

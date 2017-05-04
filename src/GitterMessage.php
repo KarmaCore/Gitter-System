@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace Karma\System\Gitter;
 
+use Carbon\Carbon;
+use Karma\Platform\Io\UserInterface;
 use Karma\Platform\Io\AbstractMessage;
 use Karma\Platform\Io\ChannelInterface;
-use Karma\Platform\Io\UserInterface;
 
 /**
  * Class GitterMessage
@@ -27,11 +28,29 @@ class GitterMessage extends AbstractMessage
     /**
      * GitterMessage constructor.
      * @param ChannelInterface $channel
-     * @param UserInterface $author
      * @param array $data
      */
-    public function __construct(ChannelInterface $channel, UserInterface $author, array $data)
+    public function __construct(ChannelInterface $channel, array $data)
     {
-        // TODO
+        $user = $this->getUserFromMessage($channel, $data);
+
+        parent::__construct($channel, $user, $data['id'], $data['html']);
+
+        $this->createdAt = Carbon::parse($data['sent']);
+    }
+
+    /**
+     * @param ChannelInterface $channel
+     * @param array $data
+     * @return UserInterface
+     */
+    private function getUserFromMessage(ChannelInterface $channel, array $data): UserInterface
+    {
+        /** @var GitterSystem $system */
+        $system = $this->getChannel()->getSystem();
+
+        return $system->getUser($data['fromUser'], function () use ($system, $data): UserInterface {
+            return new GitterUser($system, $data['fromUser']);
+        });
     }
 }

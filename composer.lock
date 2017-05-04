@@ -291,12 +291,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KarmaCore/Platform.git",
-                "reference": "4bd58a3afc19b8502595fc5fa4abd2beeb466885"
+                "reference": "fc25b9f03b363c8361dc1b675d4d5841f574b1ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KarmaCore/Platform/zipball/4bd58a3afc19b8502595fc5fa4abd2beeb466885",
-                "reference": "4bd58a3afc19b8502595fc5fa4abd2beeb466885",
+                "url": "https://api.github.com/repos/KarmaCore/Platform/zipball/fc25b9f03b363c8361dc1b675d4d5841f574b1ca",
+                "reference": "fc25b9f03b363c8361dc1b675d4d5841f574b1ca",
                 "shasum": ""
             },
             "require": {
@@ -327,7 +327,7 @@
                 "messages",
                 "platform"
             ],
-            "time": "2017-05-04 16:44:14"
+            "time": "2017-05-04 17:11:32"
         },
         {
             "name": "nesbot/carbon",

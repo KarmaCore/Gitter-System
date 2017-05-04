@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Karma\System\Gitter;
 
 use Carbon\Carbon;
+use Karma\Platform\Io\AbstractSystem;
+use Karma\Platform\Io\SystemInterface;
 use Karma\Platform\Io\UserInterface;
 use Karma\Platform\Io\AbstractMessage;
 use Karma\Platform\Io\ChannelInterface;
@@ -32,25 +34,31 @@ class GitterMessage extends AbstractMessage
      */
     public function __construct(ChannelInterface $channel, array $data)
     {
-        $user = $this->getUserFromMessage($channel, $data);
+        /** @var GitterSystem|AbstractSystem $system */
+        $system = $channel->getSystem();
+
+        $user = $this->getUserFromMessage($system, $data['fromUser']);
 
         parent::__construct($channel, $user, $data['id'], $data['html']);
 
         $this->createdAt = Carbon::parse($data['sent']);
+
+        foreach ((array)($data['mentions'] ?? []) as $mention) {
+            $this->mentions[] = $system->getUser($mention['userId'], function () use ($system, $mention) {
+                return new GitterUser($system, $mention);
+            });
+        }
     }
 
     /**
-     * @param ChannelInterface $channel
+     * @param SystemInterface|GitterSystem $system
      * @param array $data
      * @return UserInterface
      */
-    private function getUserFromMessage(ChannelInterface $channel, array $data): UserInterface
+    private function getUserFromMessage(SystemInterface $system, array $data): UserInterface
     {
-        /** @var GitterSystem $system */
-        $system = $this->getChannel()->getSystem();
-
-        return $system->getUser($data['fromUser'], function () use ($system, $data): UserInterface {
-            return new GitterUser($system, $data['fromUser']);
+        return $system->getUser($data['id'], function () use ($system, $data): UserInterface {
+            return new GitterUser($system, $data);
         });
     }
 }

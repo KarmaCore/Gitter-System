@@ -2,23 +2,23 @@
 
 
 <p align="center">
-    <a href="https://travis-ci.org/KarmaCore/Platform">
-        <img src="https://travis-ci.org/KarmaCore/Platform.svg?branch=master">
+    <a href="https://travis-ci.org/KarmaCore/Gitter-System">
+        <img src="https://travis-ci.org/KarmaCore/Gitter-System.svg?branch=master">
     </a>
-    <a href="https://scrutinizer-ci.com/g/KarmaCore/Platform/?branch=master">
-        <img src="https://scrutinizer-ci.com/g/KarmaCore/Platform/badges/quality-score.png?b=master">
+    <a href="https://scrutinizer-ci.com/g/KarmaCore/Gitter-System/?branch=master">
+        <img src="https://scrutinizer-ci.com/g/KarmaCore/Gitter-System/badges/quality-score.png?b=master">
     </a>
-    <a href="https://scrutinizer-ci.com/g/KarmaCore/Platform/?branch=master">
-        <img src="https://scrutinizer-ci.com/g/KarmaCore/Platform/badges/coverage.png?b=master">
+    <a href="https://scrutinizer-ci.com/g/KarmaCore/Gitter-System/?branch=master">
+        <img src="https://scrutinizer-ci.com/g/KarmaCore/Gitter-System/badges/coverage.png?b=master">
     </a>
-    <a href="https://raw.githubusercontent.com/KarmaCore/Platform/master/LICENSE">
+    <a href="https://raw.githubusercontent.com/KarmaCore/Gitter-System/master/LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-green.svg">
     </a>
 </p>
 
-# Platform Component
+# Gitter System
 
-This is an abstraction layer over externals chat systems like Slack, Gitter, Vk, Facebook, etc.
+Gitter system driver for [Karma Platform](https://github.com/KarmaCore/Platform)
 
 ## Requirements
 
@@ -27,7 +27,7 @@ This is an abstraction layer over externals chat systems like Slack, Gitter, Vk,
 ## Installation
 
 1. Install composer: https://getcomposer.org/download/
-2. Run `composer require karma/platform`
+2. Run `composer require karma/gitter-system`
 
 ## Usage
 

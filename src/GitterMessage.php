@@ -35,24 +35,42 @@ class GitterMessage extends AbstractMessage
     public function __construct(ChannelInterface $channel, array $data)
     {
         /** @var GitterSystem|AbstractSystem $system */
-        $system = $channel->getSystem();
+        $system   = $channel->getSystem();
+        $mentions = $this->parseMentions($system, (array)($data['mentions'] ?? []));
+        $user     = $this->getUserFromMessage($system, $data['fromUser']);
+        $body     = $system->parseMessage($data['html'], $mentions);
 
-        $user = $this->getUserFromMessage($system, $data['fromUser']);
+        echo str_repeat('-', 50) . "\n";
+        echo $data['html'] . "\n";
+        echo '   -> ' . "\n";
+        echo $body . "\n";
 
-        parent::__construct($channel, $user, $data['id'], $system->parseMessage($data['html']));
+        parent::__construct($channel, $user, $data['id'], $body);
 
         $this->createdAt = Carbon::parse($data['sent']);
+        $this->mentions  = $mentions;
+    }
 
+    /**
+     * @param SystemInterface|GitterSystem $system
+     * @param array $data
+     * @return array
+     */
+    private function parseMentions(SystemInterface $system, array $data): array
+    {
+        $mentions = [];
 
-        foreach ((array)($data['mentions'] ?? []) as $mention) {
+        foreach ($data as $mention) {
             if (!isset($mention['userId'])) {
                 continue;
             }
 
-            $this->mentions[] = $system->getUser($mention['userId'], function () use ($system, $mention) {
+            $mentions[] = $system->getUser($mention['userId'], function () use ($system, $mention) {
                 return new GitterUser($system, $mention);
             });
         }
+
+        return $mentions;
     }
 
     /**

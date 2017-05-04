@@ -81,11 +81,12 @@ class GitterSystem extends AbstractSystem
 
     /**
      * @param string $html
+     * @param array $mentions
      * @return string
      */
-    public function parseMessage(string $html): string
+    public function parseMessage(string $html, array $mentions): string
     {
-        return $this->parser->parse($html);
+        return $this->parser->parse($html, $mentions);
     }
 
     /**

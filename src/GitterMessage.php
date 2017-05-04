@@ -39,11 +39,16 @@ class GitterMessage extends AbstractMessage
 
         $user = $this->getUserFromMessage($system, $data['fromUser']);
 
-        parent::__construct($channel, $user, $data['id'], $data['html']);
+        parent::__construct($channel, $user, $data['id'], $system->parseMessage($data['html']));
 
         $this->createdAt = Carbon::parse($data['sent']);
 
+
         foreach ((array)($data['mentions'] ?? []) as $mention) {
+            if (!isset($mention['userId'])) {
+                continue;
+            }
+
             $this->mentions[] = $system->getUser($mention['userId'], function () use ($system, $mention) {
                 return new GitterUser($system, $mention);
             });
@@ -57,8 +62,14 @@ class GitterMessage extends AbstractMessage
      */
     private function getUserFromMessage(SystemInterface $system, array $data): UserInterface
     {
-        return $system->getUser($data['id'], function () use ($system, $data): UserInterface {
+        /** @var GitterUser $user */
+        $user = $system->getUser($data['id'], function () use ($system, $data): UserInterface {
             return new GitterUser($system, $data);
         });
+
+        $user->rename($data['username']);
+        $user->setAvatar($data['avatarUrl'] ?? null);
+
+        return $user;
     }
 }

@@ -25,7 +25,27 @@ class GitterUser extends AbstractUser
      */
     public function __construct(SystemInterface $system, array $data)
     {
-        parent::__construct($system, $data['id'] ?? $data['userId'], $data['username'] ?? $data['screenName']);
+        $id    = $data['id'] ?? $data['userId'];
+        $login = $data['username'] ?? $data['displayName'] ?? $data['screenName'];
+
+        parent::__construct($system, $id, $login);
+
         $this->avatar = $data['avatarUrl'] ?? null;
+    }
+
+    /**
+     * @param string $newName
+     */
+    public function rename(string $newName): void
+    {
+        $this->name = $newName;
+    }
+
+    /**
+     * @param null|string $avatar
+     */
+    public function setAvatar(?string $avatar): void
+    {
+        $this->avatar = $avatar;
     }
 }

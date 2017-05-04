@@ -17,6 +17,8 @@ use Karma\Platform\Io\UserInterface;
 use Karma\Platform\Support\IdentityMap;
 use Karma\Platform\Support\Loggable;
 use Karma\Platform\Support\LoggableInterface;
+use Karma\System\Gitter\Message\Parser;
+use Karma\System\Gitter\Message\Renderer;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 
@@ -42,6 +44,16 @@ class GitterSystem extends AbstractSystem
     private $auth;
 
     /**
+     * @var Renderer
+     */
+    private $renderer;
+
+    /**
+     * @var Parser
+     */
+    private $parser;
+
+    /**
      * GitterSystem constructor.
      * @param string $token
      * @throws \DomainException
@@ -53,6 +65,27 @@ class GitterSystem extends AbstractSystem
         }
 
         $this->client = new Client($token);
+
+        $this->renderer = new Renderer();
+        $this->parser = new Parser();
+    }
+
+    /**
+     * @param string $html
+     * @return string
+     */
+    public function renderMessage(string $html): string
+    {
+        return $this->renderer->render($html);
+    }
+
+    /**
+     * @param string $html
+     * @return string
+     */
+    public function parseMessage(string $html): string
+    {
+        return $this->parser->parse($html);
     }
 
     /**
@@ -138,23 +171,16 @@ class GitterSystem extends AbstractSystem
      */
     public function channels(): \Traversable
     {
-        $empty    = true;
+        foreach ($this->client->rooms->all() as $room) {
+            $channel = new GitterChannel($this, $room);
+
+            $this->push(ChannelInterface::class, $channel->getId(), $channel);
+        }
+
         $channels = $this->identities(ChannelInterface::class);
 
         foreach ($channels as $channel) {
-            $empty = false;
-
             yield $channel;
-        }
-
-        if ($empty) {
-            foreach ($this->client->rooms->all() as $room) {
-                $channel = new GitterChannel($this, $room);
-
-                $this->push(ChannelInterface::class, $channel->getId(), $channel);
-
-                yield $channel;
-            }
         }
     }
 

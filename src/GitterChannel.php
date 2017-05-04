@@ -78,19 +78,23 @@ class GitterChannel extends AbstractChannel
      */
     public function publish(string $message): MessageInterface
     {
-        $response = $this->system->getClient()
-            ->messages->create($this->getId(), $message);
+        $message = $this->system->renderMessage($message);
+        $response = $this->system->getClient()->messages->create($this->getId(), $message);
 
         return new GitterMessage($this, $response);
     }
 
     /**
      * @param \Closure $then
-     * @return void
+     * @throws \Throwable
      */
     public function subscribe(\Closure $then): void
     {
-        // TODO: Implement subscribe() method.
+        $observer = $this->system->getClient()->rooms->messages($this->getId());
+
+        $observer->subscribe(function (array $data) use ($then) {
+            $then(new GitterMessage($this, $data));
+        });
     }
 
     /**

@@ -10,13 +10,10 @@ declare(strict_types=1);
 namespace Karma\System\Gitter;
 
 use Gitter\Client;
+use Karma\Platform\Ast\Transformer;
 use Karma\Platform\Io\AbstractSystem;
 use Karma\Platform\Io\ChannelInterface;
-use Karma\Platform\Io\SystemInterface;
 use Karma\Platform\Io\UserInterface;
-use Karma\Platform\Support\IdentityMap;
-use Karma\Platform\Support\Loggable;
-use Karma\Platform\Support\LoggableInterface;
 use Karma\System\Gitter\Message\Parser;
 use Karma\System\Gitter\Message\Renderer;
 use Psr\Log\LoggerInterface;
@@ -43,15 +40,7 @@ class GitterSystem extends AbstractSystem
      */
     private $auth;
 
-    /**
-     * @var Renderer
-     */
-    private $renderer;
-
-    /**
-     * @var Parser
-     */
-    private $parser;
+    private $transformer;
 
     /**
      * GitterSystem constructor.
@@ -60,33 +49,20 @@ class GitterSystem extends AbstractSystem
      */
     public function __construct(string $token)
     {
-        if (!class_exists(Client::class)) {
+        if (! class_exists(Client::class)) {
             throw new \DomainException('"serafim/gitter-api": "~4.0" required');
         }
 
         $this->client = new Client($token);
-
-        $this->renderer = new Renderer();
-        $this->parser = new Parser();
+        $this->transformer = new Transformer(new Renderer(), new Parser());
     }
 
     /**
-     * @param string $html
-     * @return string
+     * @return Transformer
      */
-    public function renderMessage(string $html): string
+    public function getTransformer(): Transformer
     {
-        return $this->renderer->render($html);
-    }
-
-    /**
-     * @param string $html
-     * @param array $mentions
-     * @return string
-     */
-    public function parseMessage(string $html, array $mentions): string
-    {
-        return $this->parser->parse($html, $mentions);
+        return $this->transformer;
     }
 
     /**
@@ -122,12 +98,27 @@ class GitterSystem extends AbstractSystem
         if ($this->auth === null) {
             $data = $this->client->authUser();
 
-            $this->auth = $this->getUser($data['id'], function() use ($data) {
+            $this->auth = $this->getUser($data['id'], function () use ($data) {
                 return new GitterUser($this, $data);
             });
         }
 
         return $this->auth;
+    }
+
+    /**
+     * @param string $channelId
+     * @return bool
+     */
+    public function has(string $channelId): bool
+    {
+        try {
+            $this->channel($channelId);
+
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     /**
@@ -146,20 +137,6 @@ class GitterSystem extends AbstractSystem
 
             return new GitterChannel($this, $data);
         });
-    }
-
-    /**
-     * @param string $channelId
-     * @return bool
-     */
-    public function has(string $channelId): bool
-    {
-        try {
-            $this->channel($channelId);
-            return true;
-        } catch (\Throwable $e) {
-            return false;
-        }
     }
 
     /**

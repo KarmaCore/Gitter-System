@@ -38,12 +38,9 @@ class GitterMessage extends AbstractMessage
         $system   = $channel->getSystem();
         $mentions = $this->parseMentions($system, (array)($data['mentions'] ?? []));
         $user     = $this->getUserFromMessage($system, $data['fromUser']);
-        $body     = $system->parseMessage($data['html'], $mentions);
+        $body     = $system->getTransformer()->parse($data['html'], $mentions);
 
-        echo str_repeat('-', 50) . "\n";
-        echo $data['html'] . "\n";
-        echo '   -> ' . "\n";
-        echo $body . "\n";
+        $system->info($data['html'] . "\n" . '   -> ' . "\n" . $body);
 
         parent::__construct($channel, $user, $data['id'], $body);
 

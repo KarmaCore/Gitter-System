@@ -7,14 +7,14 @@
  */
 declare(strict_types=1);
 
-namespace KarmaBot\Platform\Tests;
+namespace Karma\System\Gitter\Tests;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
  * Class TestCase
- * @package KarmaBot\Platform\Tests
+ * @package Karma\System\Gitter\Tests
  */
 abstract class TestCase extends BaseTestCase
 {

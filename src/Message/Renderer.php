@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace Karma\System\Gitter\Message;
 
-use Karma\Platform\Transformer\RendererInterface;
+use Karma\Platform\Ast\NodeList;
+use Karma\Platform\Ast\Transformer\RendererInterface;
 
 /**
  * Class Renderer
@@ -18,11 +19,11 @@ use Karma\Platform\Transformer\RendererInterface;
 class Renderer implements RendererInterface
 {
     /**
-     * @param string $html
+     * @param NodeList $nodes
      * @return string
      */
-    public function render(string $html): string
+    public function render(NodeList $nodes): string
     {
-        return $html;
+        return $nodes->getBody();
     }
 }

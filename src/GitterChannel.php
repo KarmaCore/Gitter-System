@@ -9,10 +9,12 @@ declare(strict_types=1);
 
 namespace Karma\System\Gitter;
 
+use Karma\Platform\Ast\NodeList;
 use Karma\Platform\Io\UserInterface;
 use Karma\Platform\Io\AbstractChannel;
 use Karma\Platform\Io\SystemInterface;
 use Karma\Platform\Io\MessageInterface;
+use SebastianBergmann\CodeCoverage\Report\Xml\Node;
 
 /**
  * Class GitterChannel
@@ -71,14 +73,14 @@ class GitterChannel extends AbstractChannel
     }
 
     /**
-     * @param string $message
+     * @param NodeList $nodes
      * @return MessageInterface
      * @throws \Exception
      * @throws \Throwable
      */
-    public function publish(string $message): MessageInterface
+    public function publish(NodeList $nodes): MessageInterface
     {
-        $message = $this->system->renderMessage($message);
+        $message = $this->system->getTransformer()->render($nodes);
         $response = $this->system->getClient()->messages->create($this->getId(), $message);
 
         return new GitterMessage($this, $response);

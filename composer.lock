@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d88708a4caa5ba2ad5b37573176ea8b1",
+    "content-hash": "163538ceee8038ff9748604ceca271e6",
     "packages": [
         {
             "name": "clue/buzz-react",
@@ -288,11 +288,16 @@
         {
             "name": "karma/platform",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KarmaCore/Platform.git",
+                "reference": "d0e6ecfbeef4b2365fce7d5af06b0bff7b75de50"
+            },
             "dist": {
-                "type": "path",
-                "url": "../Platform",
-                "reference": "9b99ba2497bc4ef0ea690418db6a28454281611a",
-                "shasum": null
+                "type": "zip",
+                "url": "https://api.github.com/repos/KarmaCore/Platform/zipball/d0e6ecfbeef4b2365fce7d5af06b0bff7b75de50",
+                "reference": "d0e6ecfbeef4b2365fce7d5af06b0bff7b75de50",
+                "shasum": ""
             },
             "require": {
                 "nesbot/carbon": "1.*",
@@ -312,11 +317,7 @@
                     "Karma\\Platform\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Karma\\Platform\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -325,7 +326,8 @@
                 "driver",
                 "messages",
                 "platform"
-            ]
+            ],
+            "time": "2017-05-05 00:41:19"
         },
         {
             "name": "nesbot/carbon",

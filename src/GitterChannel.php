@@ -10,17 +10,13 @@ declare(strict_types=1);
 namespace Karma\System\Gitter;
 
 use Karma\Platform\Ast\NodeList;
-use Karma\Platform\Io\UserInterface;
 use Karma\Platform\Io\AbstractChannel;
 use Karma\Platform\Io\SystemInterface;
 use Karma\Platform\Io\MessageInterface;
-use SebastianBergmann\CodeCoverage\Report\Xml\Node;
 
 /**
  * Class GitterChannel
  * @package Karma\System\Gitter
- *
- * @property-read GitterSystem|SystemInterface $system
  */
 class GitterChannel extends AbstractChannel
 {
@@ -65,7 +61,10 @@ class GitterChannel extends AbstractChannel
      */
     public function messages(string $beforeId = null): \Traversable
     {
-        $messages = $this->system->getClient()->messages->allBeforeId($this->id, $beforeId);
+        /** @var GitterSystem $system */
+        $system = $this->system;
+
+        $messages = $system->getClient()->messages->allBeforeId($this->id, $beforeId);
 
         foreach ($messages as $message) {
             yield new GitterMessage($this, $message);
@@ -80,8 +79,11 @@ class GitterChannel extends AbstractChannel
      */
     public function publish(NodeList $nodes): MessageInterface
     {
-        $message = $this->system->getTransformer()->render($nodes);
-        $response = $this->system->getClient()->messages->create($this->getId(), $message);
+        /** @var GitterSystem $system */
+        $system = $this->system;
+
+        $message = $system->getTransformer()->render($nodes);
+        $response = $system->getClient()->messages->create($this->getId(), $message);
 
         return new GitterMessage($this, $response);
     }
@@ -92,7 +94,10 @@ class GitterChannel extends AbstractChannel
      */
     public function subscribe(\Closure $then): void
     {
-        $observer = $this->system->getClient()->rooms->messages($this->getId());
+        /** @var GitterSystem $system */
+        $system = $this->system;
+
+        $observer = $system->getClient()->rooms->messages($this->getId());
 
         $observer->subscribe(function (array $data) use ($then) {
             $then(new GitterMessage($this, $data));
